@@ -10,7 +10,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gogogoghost/libffigo/ffi"
+	"github.com/gogogoghost/libffigo"
 )
 
 type MonitorType string
@@ -27,9 +27,7 @@ type UDevMonitor struct {
 }
 
 func NewMonitor(ctx *UDevContext, monitorType MonitorType) (mon *UDevMonitor, err error) {
-	name := C.CString(string(monitorType))
-	defer ffi.FreePtr(unsafe.Pointer(name))
-	ptr := Udev_monitor_new_from_netlink.Call(ctx.ptr, name).Pointer()
+	ptr := Udev_monitor_new_from_netlink(ctx.ptr, string(monitorType))
 	if ptr == nil {
 		return nil, errors.New("fail to create monitor")
 	}
@@ -51,11 +49,11 @@ func (self *UDevMonitor) AddFilter(subSystem string, devType string) error {
 		devTypePtr := C.CString(subSystem)
 		defer ffi.FreePtr(unsafe.Pointer(devTypePtr))
 	}
-	res := Udev_monitor_filter_add_match_subsystem_devtype.Call(
+	res := Udev_monitor_filter_add_match_subsystem_devtype(
 		self.ptr,
 		subSystemPtr,
 		devTypePtr,
-	).Int32()
+	)
 	if res != 0 {
 		return fmt.Errorf("add filter return:%d", res)
 	}
@@ -63,11 +61,11 @@ func (self *UDevMonitor) AddFilter(subSystem string, devType string) error {
 }
 
 func (self *UDevMonitor) StartMonitor() (chan UEvent, error) {
-	res := Udev_monitor_enable_receiving.Call(self.ptr).Int32()
+	res := Udev_monitor_enable_receiving(self.ptr)
 	if res != 0 {
 		return nil, fmt.Errorf("enable receiving return:%d", res)
 	}
-	fd := Udev_monitor_get_fd.Call(self.ptr).Int32()
+	fd := Udev_monitor_get_fd(self.ptr)
 	if fd < 0 {
 		return nil, fmt.Errorf("fail to get fd:%d", fd)
 	}
@@ -86,18 +84,18 @@ func (self *UDevMonitor) poll(channel chan UEvent) {
 			break
 		}
 		// 为0 读取数据
-		device := Udev_monitor_receive_device.Call(self.ptr).Pointer()
+		device := Udev_monitor_receive_device(self.ptr)
 		if device == nil {
 			continue
 		}
-		action := Udev_device_get_action.Call(device).String()
+		action := Udev_device_get_action(device)
 		env := make(map[string]string)
-		propEntry := Udev_device_get_properties_list_entry.Call(device).Pointer()
+		propEntry := Udev_device_get_properties_list_entry(device)
 		for propEntry != nil {
-			key := Udev_list_entry_get_name.Call(propEntry).String()
-			value := Udev_list_entry_get_value.Call(propEntry).String()
+			key := Udev_list_entry_get_name(propEntry)
+			value := Udev_list_entry_get_value(propEntry)
 			env[key] = value
-			propEntry = Udev_list_entry_get_next.Call(propEntry).Pointer()
+			propEntry = Udev_list_entry_get_next(propEntry)
 		}
 		channel <- UEvent{
 			Action: action,
