@@ -4,7 +4,10 @@ import (
 	"C"
 	"unsafe"
 )
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type UDevEnumerator struct {
 	ctx *UDevContext
@@ -29,6 +32,7 @@ func (obj *UDevEnumerator) List() []*UDevice {
 	for entry != nil {
 		//获取device
 		name := Udev_list_entry_get_name(entry)
+		fmt.Println(name)
 		dev := Udev_device_new_from_syspath(
 			obj.ctx.ptr,
 			name,

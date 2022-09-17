@@ -12,3 +12,5 @@ github.com/gogogoghost/libffigo v0.0.0-20220908101457-d723616077eb h1:lIzzEczM5i
 github.com/gogogoghost/libffigo v0.0.0-20220908101457-d723616077eb/go.mod h1:rzgzXRYr55Vmp9GFK88Z7mh5sHX94Paje52EfNDkwPU=
 github.com/gogogoghost/libffigo v0.0.0-20220916094346-41bb583e3044 h1:b4VyCqP1YMdGyldcgB2Wy1cb9dY5FX6TYAosFntONgA=
 github.com/gogogoghost/libffigo v0.0.0-20220916094346-41bb583e3044/go.mod h1:rzgzXRYr55Vmp9GFK88Z7mh5sHX94Paje52EfNDkwPU=
+github.com/gogogoghost/libffigo v0.0.0-20220917091343-673d1139d41a h1:Up8eR7bHh87Hk48fwkzKCCSLmdEhv054SQor2HZVZE0=
+github.com/gogogoghost/libffigo v0.0.0-20220917091343-673d1139d41a/go.mod h1:rzgzXRYr55Vmp9GFK88Z7mh5sHX94Paje52EfNDkwPU=
