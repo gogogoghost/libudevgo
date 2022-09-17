@@ -18,21 +18,24 @@ type UEvent struct {
 	Device UDevice
 }
 
-var Udev_new func() unsafe.Pointer
-var Udev_enumerate_new func(unsafe.Pointer) unsafe.Pointer
-var Udev_enumerate_scan_devices func(unsafe.Pointer) int
-var Udev_enumerate_get_list_entry func(unsafe.Pointer) unsafe.Pointer
-var Udev_device_new_from_syspath func(unsafe.Pointer, string) unsafe.Pointer
-var Udev_list_entry_get_name func(unsafe.Pointer) string
-var Udev_device_get_properties_list_entry func(unsafe.Pointer) unsafe.Pointer
-var Udev_list_entry_get_value func(unsafe.Pointer) string
-var Udev_list_entry_get_next func(unsafe.Pointer) unsafe.Pointer
-var Udev_monitor_new_from_netlink func(unsafe.Pointer, string) unsafe.Pointer
-var Udev_monitor_enable_receiving func(unsafe.Pointer) int
-var Udev_monitor_filter_add_match_subsystem_devtype func(unsafe.Pointer, unsafe.Pointer, unsafe.Pointer) int
-var Udev_monitor_get_fd func(unsafe.Pointer) int
-var Udev_monitor_receive_device func(unsafe.Pointer) unsafe.Pointer
-var Udev_device_get_action func(unsafe.Pointer) string
+var (
+	Udev_new                                        func() unsafe.Pointer
+	Udev_enumerate_new                              func(unsafe.Pointer) unsafe.Pointer
+	Udev_enumerate_scan_devices                     func(unsafe.Pointer) int
+	Udev_enumerate_get_list_entry                   func(unsafe.Pointer) unsafe.Pointer
+	Udev_device_new_from_syspath                    func(unsafe.Pointer, string) unsafe.Pointer
+	Udev_list_entry_get_name                        func(unsafe.Pointer) string
+	Udev_device_get_properties_list_entry           func(unsafe.Pointer) unsafe.Pointer
+	Udev_list_entry_get_value                       func(unsafe.Pointer) string
+	Udev_list_entry_get_next                        func(unsafe.Pointer) unsafe.Pointer
+	Udev_monitor_new_from_netlink                   func(unsafe.Pointer, string) unsafe.Pointer
+	Udev_monitor_enable_receiving                   func(unsafe.Pointer) int
+	Udev_monitor_filter_add_match_subsystem_devtype func(unsafe.Pointer, unsafe.Pointer, unsafe.Pointer) int
+	Udev_monitor_get_fd                             func(unsafe.Pointer) int
+	Udev_monitor_receive_device                     func(unsafe.Pointer) unsafe.Pointer
+
+// Udev_device_get_action func(unsafe.Pointer) string
+)
 
 func Init() {
 	lib, err := ffi.Open("libudev.so", ffi.RTLD_LAZY)
@@ -109,10 +112,10 @@ func Init() {
 		ffi.PTR,
 		ffi.PTR,
 	)
-	lib.SymMust(
-		"udev_device_get_action",
-		&Udev_device_get_action,
-		ffi.PTR,
-		ffi.PTR,
-	)
+	// lib.SymMust(
+	// 	"udev_device_get_action",
+	// 	&Udev_device_get_action,
+	// 	ffi.PTR,
+	// 	ffi.PTR,
+	// )
 }

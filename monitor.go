@@ -10,7 +10,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gogogoghost/libffigo"
+	ffi "github.com/gogogoghost/libffigo"
 )
 
 type MonitorType string
@@ -38,7 +38,7 @@ func NewMonitor(ctx *UDevContext, monitorType MonitorType) (mon *UDevMonitor, er
 	}, nil
 }
 
-func (self *UDevMonitor) AddFilter(subSystem string, devType string) error {
+func (obj *UDevMonitor) AddFilter(subSystem string, devType string) error {
 	var subSystemPtr unsafe.Pointer
 	var devTypePtr unsafe.Pointer
 	if len(subSystem) > 0 {
@@ -50,7 +50,7 @@ func (self *UDevMonitor) AddFilter(subSystem string, devType string) error {
 		defer ffi.FreePtr(unsafe.Pointer(devTypePtr))
 	}
 	res := Udev_monitor_filter_add_match_subsystem_devtype(
-		self.ptr,
+		obj.ptr,
 		subSystemPtr,
 		devTypePtr,
 	)
@@ -60,35 +60,35 @@ func (self *UDevMonitor) AddFilter(subSystem string, devType string) error {
 	return nil
 }
 
-func (self *UDevMonitor) StartMonitor() (chan UEvent, error) {
-	res := Udev_monitor_enable_receiving(self.ptr)
+func (obj *UDevMonitor) StartMonitor() (chan UEvent, error) {
+	res := Udev_monitor_enable_receiving(obj.ptr)
 	if res != 0 {
 		return nil, fmt.Errorf("enable receiving return:%d", res)
 	}
-	fd := Udev_monitor_get_fd(self.ptr)
+	fd := Udev_monitor_get_fd(obj.ptr)
 	if fd < 0 {
 		return nil, fmt.Errorf("fail to get fd:%d", fd)
 	}
-	self.fd = int(fd)
+	obj.fd = int(fd)
 	channel := make(chan UEvent)
 	// 开始后台poll
-	go self.poll(channel)
+	go obj.poll(channel)
 	return channel, nil
 }
 
-func (self *UDevMonitor) poll(channel chan UEvent) {
-	for self.fd > 0 {
-		res := int(C.poll_fd(C.int(self.fd), -1))
+func (obj *UDevMonitor) poll(channel chan UEvent) {
+	for obj.fd > 0 {
+		res := int(C.poll_fd(C.int(obj.fd), -1))
 		// 返回-1 结束
 		if res < 0 {
 			break
 		}
 		// 为0 读取数据
-		device := Udev_monitor_receive_device(self.ptr)
+		device := Udev_monitor_receive_device(obj.ptr)
 		if device == nil {
 			continue
 		}
-		action := Udev_device_get_action(device)
+		// action := Udev_device_get_action(device)
 		env := make(map[string]string)
 		propEntry := Udev_device_get_properties_list_entry(device)
 		for propEntry != nil {
@@ -98,7 +98,7 @@ func (self *UDevMonitor) poll(channel chan UEvent) {
 			propEntry = Udev_list_entry_get_next(propEntry)
 		}
 		channel <- UEvent{
-			Action: action,
+			Action: env["ACTION"],
 			Device: UDevice{
 				SubSystem: env["SUBSYSTEM"],
 				Env:       env,
