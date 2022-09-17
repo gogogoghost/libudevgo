@@ -27,7 +27,7 @@ type UDevMonitor struct {
 }
 
 func NewMonitor(ctx *UDevContext, monitorType MonitorType) (mon *UDevMonitor, err error) {
-	ptr := Udev_monitor_new_from_netlink(ctx.ptr, string(monitorType))
+	ptr := udev_monitor_new_from_netlink(ctx.ptr, string(monitorType))
 	if ptr == nil {
 		return nil, errors.New("fail to create monitor")
 	}
@@ -49,7 +49,7 @@ func (obj *UDevMonitor) AddFilter(subSystem string, devType string) error {
 		devTypePtr := C.CString(subSystem)
 		defer ffi.FreePtr(unsafe.Pointer(devTypePtr))
 	}
-	res := Udev_monitor_filter_add_match_subsystem_devtype(
+	res := udev_monitor_filter_add_match_subsystem_devtype(
 		obj.ptr,
 		subSystemPtr,
 		devTypePtr,
@@ -61,11 +61,11 @@ func (obj *UDevMonitor) AddFilter(subSystem string, devType string) error {
 }
 
 func (obj *UDevMonitor) StartMonitor() (chan UEvent, error) {
-	res := Udev_monitor_enable_receiving(obj.ptr)
+	res := udev_monitor_enable_receiving(obj.ptr)
 	if res != 0 {
 		return nil, fmt.Errorf("enable receiving return:%d", res)
 	}
-	fd := Udev_monitor_get_fd(obj.ptr)
+	fd := udev_monitor_get_fd(obj.ptr)
 	if fd < 0 {
 		return nil, fmt.Errorf("fail to get fd:%d", fd)
 	}
@@ -84,18 +84,18 @@ func (obj *UDevMonitor) poll(channel chan UEvent) {
 			break
 		}
 		// 为0 读取数据
-		device := Udev_monitor_receive_device(obj.ptr)
+		device := udev_monitor_receive_device(obj.ptr)
 		if device == nil {
 			continue
 		}
 		// action := Udev_device_get_action(device)
 		env := make(map[string]string)
-		propEntry := Udev_device_get_properties_list_entry(device)
+		propEntry := udev_device_get_properties_list_entry(device)
 		for propEntry != nil {
-			key := Udev_list_entry_get_name(propEntry)
-			value := Udev_list_entry_get_value(propEntry)
+			key := udev_list_entry_get_name(propEntry)
+			value := udev_list_entry_get_value(propEntry)
 			env[key] = value
-			propEntry = Udev_list_entry_get_next(propEntry)
+			propEntry = udev_list_entry_get_next(propEntry)
 		}
 		channel <- UEvent{
 			Action: env["ACTION"],

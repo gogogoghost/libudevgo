@@ -10,7 +10,7 @@ type UDevContext struct {
 }
 
 func NewContext() (obj *UDevContext, err error) {
-	ctx := Udev_new()
+	ctx := udev_new()
 	if ctx == nil {
 		return nil, errors.New("fail to create context")
 	}
