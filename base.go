@@ -42,7 +42,7 @@ var (
 
 var libName = "libudev.so"
 
-func setLibName(name string) {
+func SetLibName(name string) {
 	libName = name
 }
 
