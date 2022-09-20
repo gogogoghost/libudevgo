@@ -47,7 +47,7 @@ func SetLibName(name string) {
 }
 
 func Init() {
-	lib, err := ffi.Open("libudev.so", ffi.RTLD_LAZY)
+	lib, err := ffi.Open(libName, ffi.RTLD_LAZY)
 	if err != nil {
 		panic(err)
 	}
