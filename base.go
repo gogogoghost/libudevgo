@@ -19,21 +19,32 @@ type UEvent struct {
 }
 
 var (
-	udev_new                                        func() unsafe.Pointer
-	udev_enumerate_new                              func(unsafe.Pointer) unsafe.Pointer
-	udev_enumerate_scan_devices                     func(unsafe.Pointer) int
-	udev_enumerate_get_list_entry                   func(unsafe.Pointer) unsafe.Pointer
-	udev_device_new_from_syspath                    func(unsafe.Pointer, string) unsafe.Pointer
-	udev_list_entry_get_name                        func(unsafe.Pointer) string
-	udev_device_get_properties_list_entry           func(unsafe.Pointer) unsafe.Pointer
-	udev_list_entry_get_value                       func(unsafe.Pointer) string
-	udev_list_entry_get_next                        func(unsafe.Pointer) unsafe.Pointer
+	udev_new func() unsafe.Pointer
+	//enumerator
+	udev_enumerate_new                 func(unsafe.Pointer) unsafe.Pointer
+	udev_enumerate_scan_devices        func(unsafe.Pointer) int
+	udev_enumerate_get_list_entry      func(unsafe.Pointer) unsafe.Pointer
+	udev_enumerate_add_match_subsystem func(unsafe.Pointer, unsafe.Pointer) int
+	//device
+	udev_device_new_from_syspath          func(unsafe.Pointer, string) unsafe.Pointer
+	udev_device_get_properties_list_entry func(unsafe.Pointer) unsafe.Pointer
+	//list
+	udev_list_entry_get_name  func(unsafe.Pointer) string
+	udev_list_entry_get_value func(unsafe.Pointer) string
+	udev_list_entry_get_next  func(unsafe.Pointer) unsafe.Pointer
+	//monitor
 	udev_monitor_new_from_netlink                   func(unsafe.Pointer, string) unsafe.Pointer
 	udev_monitor_enable_receiving                   func(unsafe.Pointer) int
 	udev_monitor_filter_add_match_subsystem_devtype func(unsafe.Pointer, unsafe.Pointer, unsafe.Pointer) int
 	udev_monitor_get_fd                             func(unsafe.Pointer) int
 	udev_monitor_receive_device                     func(unsafe.Pointer) unsafe.Pointer
 )
+
+var libName = "libudev.so"
+
+func setLibName(name string) {
+	libName = name
+}
 
 func Init() {
 	lib, err := ffi.Open("libudev.so", ffi.RTLD_LAZY)
@@ -107,6 +118,13 @@ func Init() {
 	lib.SymMust(
 		"udev_monitor_receive_device",
 		&udev_monitor_receive_device,
+		ffi.PTR,
+		ffi.PTR,
+	)
+	lib.SymMust(
+		"udev_enumerate_add_match_subsystem",
+		&udev_enumerate_add_match_subsystem,
+		ffi.SINT32,
 		ffi.PTR,
 		ffi.PTR,
 	)

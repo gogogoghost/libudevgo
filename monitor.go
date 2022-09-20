@@ -7,7 +7,6 @@ import (
 	"unsafe"
 )
 import (
-	"errors"
 	"fmt"
 
 	ffi "github.com/gogogoghost/libffigo"
@@ -24,18 +23,6 @@ type UDevMonitor struct {
 	ctx *UDevContext
 	ptr unsafe.Pointer
 	fd  int
-}
-
-func NewMonitor(ctx *UDevContext, monitorType MonitorType) (mon *UDevMonitor, err error) {
-	ptr := udev_monitor_new_from_netlink(ctx.ptr, string(monitorType))
-	if ptr == nil {
-		return nil, errors.New("fail to create monitor")
-	}
-	return &UDevMonitor{
-		ctx: ctx,
-		ptr: ptr,
-		fd:  -1,
-	}, nil
 }
 
 func (obj *UDevMonitor) AddFilter(subSystem string, devType string) error {

@@ -5,8 +5,9 @@ import (
 	"unsafe"
 )
 import (
-	"errors"
 	"fmt"
+
+	ffi "github.com/gogogoghost/libffigo"
 )
 
 type UDevEnumerator struct {
@@ -14,15 +15,20 @@ type UDevEnumerator struct {
 	ptr unsafe.Pointer
 }
 
-func NewEnumerator(ctx *UDevContext) (obj *UDevEnumerator, err error) {
-	enumerate := udev_enumerate_new(ctx.ptr)
-	if enumerate == nil {
-		return nil, errors.New("fail to create enumerate")
+func (obj *UDevEnumerator) AddFilter(subSystem string) error {
+	var subSystemPtr unsafe.Pointer
+	if len(subSystem) > 0 {
+		subSystemPtr := C.CString(subSystem)
+		defer ffi.FreePtr(unsafe.Pointer(subSystemPtr))
 	}
-	return &UDevEnumerator{
-		ctx: ctx,
-		ptr: enumerate,
-	}, nil
+	res := udev_enumerate_add_match_subsystem(
+		obj.ptr,
+		subSystemPtr,
+	)
+	if res != 0 {
+		return fmt.Errorf("add filter return:%d", res)
+	}
+	return nil
 }
 
 func (obj *UDevEnumerator) List() []*UDevice {
@@ -32,7 +38,6 @@ func (obj *UDevEnumerator) List() []*UDevice {
 	for entry != nil {
 		//获取device
 		name := udev_list_entry_get_name(entry)
-		fmt.Println(name)
 		dev := udev_device_new_from_syspath(
 			obj.ctx.ptr,
 			name,
