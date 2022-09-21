@@ -22,8 +22,4 @@ _testmain.go
 *.exe
 *.test
 
-# 本地测试专用文件
-main/
 dist/
-build.sh
-go.mod
