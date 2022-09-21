@@ -29,12 +29,12 @@ func (obj *UDevMonitor) AddFilter(subSystem string, devType string) error {
 	var subSystemPtr unsafe.Pointer
 	var devTypePtr unsafe.Pointer
 	if len(subSystem) > 0 {
-		subSystemPtr := C.CString(subSystem)
-		defer ffi.FreePtr(unsafe.Pointer(subSystemPtr))
+		subSystemPtr = unsafe.Pointer(C.CString(subSystem))
+		defer ffi.FreePtr(subSystemPtr)
 	}
 	if len(devType) > 0 {
-		devTypePtr := C.CString(subSystem)
-		defer ffi.FreePtr(unsafe.Pointer(devTypePtr))
+		devTypePtr = unsafe.Pointer(C.CString(subSystem))
+		defer ffi.FreePtr(devTypePtr)
 	}
 	res := udev_monitor_filter_add_match_subsystem_devtype(
 		obj.ptr,

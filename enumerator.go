@@ -18,8 +18,8 @@ type UDevEnumerator struct {
 func (obj *UDevEnumerator) AddFilter(subSystem string) error {
 	var subSystemPtr unsafe.Pointer
 	if len(subSystem) > 0 {
-		subSystemPtr := C.CString(subSystem)
-		defer ffi.FreePtr(unsafe.Pointer(subSystemPtr))
+		subSystemPtr = unsafe.Pointer(C.CString(subSystem))
+		defer ffi.FreePtr(subSystemPtr)
 	}
 	res := udev_enumerate_add_match_subsystem(
 		obj.ptr,
