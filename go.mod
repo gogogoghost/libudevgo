@@ -1,4 +1,4 @@
-module github.com/gogogoghost/udev
+module github.com/gogogoghost/libudevgo
 
 go 1.18
 

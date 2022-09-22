@@ -1,6 +1,6 @@
 ## libudev binding for go
 
-[![GoDoc](https://godoc.org/github.com/gogogoghost/udev?status.svg)](https://godoc.org/github.com/gogogoghost/udev)
+[![GoDoc](https://godoc.org/github.com/gogogoghost/libudevgo?status.svg)](https://godoc.org/github.com/gogogoghost/libudevgo)
 
 loading libudev.so with dynamic loading at runtime by [libffigo](https://github.com/gogogoghost/libffigo)
 
@@ -9,7 +9,7 @@ loading libudev.so with dynamic loading at runtime by [libffigo](https://github.
 get this module
 
 ```sh
-go get github.com/gogogoghost/udev
+go get github.com/gogogoghost/libudevgo
 ```
 
 init and create context
