@@ -1,4 +1,5 @@
 #include "helper.h"
+#include "errno.h"
 
 int poll_fd(int fd,int timeout){
     struct pollfd data[1];
@@ -6,4 +7,8 @@ int poll_fd(int fd,int timeout){
     data[0].events=POLLIN|POLLPRI;
     data[0].revents=0;
     return poll(data,1,timeout);
+}
+
+int get_errno(){
+    return errno;
 }

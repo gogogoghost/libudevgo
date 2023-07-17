@@ -59,16 +59,19 @@ func (obj *UDevMonitor) StartMonitor() (chan UEvent, error) {
 	obj.fd = int(fd)
 	channel := make(chan UEvent)
 	// 开始后台poll
-	go obj.poll(channel)
+	go func() {
+		res := obj.poll(channel)
+		fmt.Printf("Unexcept poll exit:%d\n", res)
+	}()
 	return channel, nil
 }
 
-func (obj *UDevMonitor) poll(channel chan UEvent) {
+func (obj *UDevMonitor) poll(channel chan UEvent) int {
 	for obj.fd > 0 {
 		res := int(C.poll_fd(C.int(obj.fd), -1))
 		// 返回-1 结束
 		if res < 0 {
-			break
+			return int(C.get_errno())
 		}
 		// 为0 读取数据
 		device := udev_monitor_receive_device(obj.ptr)
@@ -92,4 +95,5 @@ func (obj *UDevMonitor) poll(channel chan UEvent) {
 			},
 		}
 	}
+	return 0
 }

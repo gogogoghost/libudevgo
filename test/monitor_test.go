@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	udev "github.com/gogogoghost/libudevgo"
+	udev "github.com/gogogoghost/libudevgo/lib"
 )
 
 func TestEnumerator(t *testing.T) {
