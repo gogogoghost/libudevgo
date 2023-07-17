@@ -18,6 +18,7 @@ func main() {
 		panic(err)
 	}
 	monitor.AddFilter("tty", "")
+	monitor.AddFilter("block", "")
 	monitorChan, err := monitor.StartMonitor()
 	if err != nil {
 		panic(err)
