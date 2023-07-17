@@ -1,5 +1,7 @@
 ## libudev binding for go
 
+[![GoDoc](https://godoc.org/github.com/gogogoghost/udev?status.svg)](https://godoc.org/github.com/gogogoghost/udev)
+
 loading libudev.so with dynamic loading at runtime by [libffigo](https://github.com/gogogoghost/libffigo)
 
 ### usage

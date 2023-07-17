@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gogogoghost/udev"
+	udev "github.com/gogogoghost/udev/lib"
 )
 
 func TestEnumerator(t *testing.T) {
@@ -13,7 +13,11 @@ func TestEnumerator(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	enumerator, err := udev.NewEnumerator(ctx)
+	enumerator, err := ctx.NewEnumerator()
+	if err != nil {
+		panic(err)
+	}
+	err = enumerator.AddFilter("tty")
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +34,7 @@ func TestMonitor(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	monitor, err := udev.NewMonitor(ctx, udev.UDEV)
+	monitor, err := ctx.NewMonitor(udev.UDEV)
 	if err != nil {
 		panic(err)
 	}
