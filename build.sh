@@ -14,4 +14,7 @@ export LIBFFI_PATH=/home/ghost/software/libffi-3.4.2/_install
 
 export CGO_CFLAGS="-I$LIBFFI_PATH/include"
 export CGO_LDFLAGS="-L$LIBFFI_PATH/lib"
-go build -p 12 -ldflags "-s -w" -o dist/udev ./main
+
+rm -rf dist
+
+go build -p 12 -ldflags "-s -w" -o dist/usg
