@@ -60,8 +60,15 @@ func (obj *UDevMonitor) StartMonitor() (chan UEvent, error) {
 	channel := make(chan UEvent)
 	// 开始后台poll
 	go func() {
-		res := obj.poll(channel)
-		fmt.Printf("Unexcept poll exit:%d\n", res)
+		for {
+			res := obj.poll(channel)
+			if res == 4 {
+				fmt.Println("receive EINTR. retry")
+				continue
+			}
+			fmt.Printf("Unexcept poll exit:%d\n", res)
+			break
+		}
 	}()
 	return channel, nil
 }
